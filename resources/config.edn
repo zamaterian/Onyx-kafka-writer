@@ -1,0 +1,19 @@
+;; juxt - aero config..
+;; https://github.com/juxt/aero
+
+{:number-of-peers 8
+ :topic           "beregn"
+ :tenancy-id      #env BATCH_VUR_TENANCY_ID
+ :kafka-zookeeper #env [ZK_ADDR "zk:2181"]
+ :peer-config     {:onyx/tenancy-id                       #env BATCH_VUR_TENANCY_ID
+                   :zookeeper/address                     #env [ZK_ADDR "zk:2181"]
+                   :onyx.peer/zookeeper-timeout           60000
+                   :onyx.peer/job-scheduler               :onyx.job-scheduler/balanced
+                   :onyx.messaging/impl                   :aeron
+                   :onyx.messaging/peer-port              40200
+                   :onyx.messaging/allow-short-circuit?   true
+                   :onyx.messaging.aeron/embedded-driver? false
+                   :onyx.messaging/bind-addr              #env BIND_ADDR}
+
+
+ }

@@ -1,0 +1,51 @@
+batch_vur:
+    build: .
+  #  shm_size: 256M
+    links:
+        - kafka:kafka
+        - zookeeper:zk
+
+    volumes:
+    - ./logs:/logs
+
+    environment:
+    - BATCH_VUR_TENANCY_ID=52a36193-7942-4606-a783-15e098f15f0f
+      #    - ZK_ADDR=zookeeper:2181
+    - APP_NAME=batch_vur
+    
+    privileged: true
+    expose:
+    - "40200"
+    - "40200/udp"
+
+    ports:
+    - 40200
+    - 40200/udp
+
+    labels:
+      app: batch_vur
+#   NOTE: if you scale this to more than 1 you need to start "docker-compose up -d" to avoid breaking on logging
+#    logging:
+#      driver: splunk
+#      options:
+#        splunk-token: "FC62E292-73DF-4E82-BA80-3F5CC3B99796"
+#        splunk-url: "https://172.23.14.50:8088"
+#        splunk-insecureskipverify: "1"
+#        labels: "build,app,com.docker.compose.container-number,com.docker.compose.service"
+
+
+zookeeper:
+        image: 'wurstmeister/zookeeper'
+        ports:
+          - '2181:2181'
+kafka:
+        image: 'wurstmeister/kafka'
+        environment:
+          KAFKA_BROKER_ID: 1
+        links:
+          - zookeeper:zk
+        ports:
+          - "9092:9092"
+        volumes:
+          - /var/run/docker.sock:/var/run/docker.sock
+
