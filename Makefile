@@ -2,7 +2,7 @@ CONTAINER_ID  = $(shell docker ps --filter ancestor=wurstmeister/kafka -q)
 KAFKA_PATH = "/opt/kafka_2.11-0.9.0.1"
 
 consume:
-	docker exec -t -i $(CONTAINER_ID) /bin/bash -c "$(KAFKA_PATH)/bin/kafka-console-consumer.sh --zookeeper zk:2181 --topic beregn" | tee kafka-out.log
+	docker exec -t -i $(CONTAINER_ID) /bin/bash -c "$(KAFKA_PATH)/bin/kafka-console-consumer.sh --from-beginning --zookeeper zk:2181 --topic beregn" | tee kafka-out.log
 
 stop:
 	docker-compose down
@@ -13,10 +13,6 @@ clean:
 	rm -rf logs/*
 
 clean-stop: stop clean
-
-submit-job-no-loss:
-	docker exec -t -i $(CONTAINER_ID) /bin/bash -c  "$(KAFKA_PATH)/bin/kafka-topics.sh  --topic beregn --create --zookeeper zk:2181 --partitions 2 --replication-factor 1"
-	docker exec -it  batchvur_batch_vur_1  bash -c 'BATCH_VUR_TENANCY_ID=52a36193-7942-4606-a783-15e098f15f0f java -cp batch-vur-0.1.0-SNAPSHOT-standalone.jar batch_vur.core'
 
 submit-job:
 	docker exec -it  batchvur_batch_vur_1  bash -c 'BATCH_VUR_TENANCY_ID=52a36193-7942-4606-a783-15e098f15f0f java -cp batch-vur-0.1.0-SNAPSHOT-standalone.jar batch_vur.core'
